@@ -11,6 +11,7 @@ app.use('/users', user);
 
 app.listen(3000, ()=>{
     console.log("server running");
+    
 });
 
 module.exports = app;

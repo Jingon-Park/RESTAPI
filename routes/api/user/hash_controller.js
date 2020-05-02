@@ -6,11 +6,10 @@ const bodyParser = require("body-parser");
 
 
 
-const hashList = {
-
-};
+const hashList = [];
 
 exports.hashAdd = (req, res) =>{
     console.log(req.body);
-    res.json(users);
+    hashList.push(req.body);
+    res.json(hashList);
 }
