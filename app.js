@@ -4,14 +4,14 @@ const app = express();
 
 app.use(bodyParser.json());
 
-const user = require("./routes/api/user/index");
+const hash = require("./routes/api/hash/index");
 
 
-app.use('/users', user);
+app.use('/hash', hash);
 
 app.listen(3000, ()=>{
     console.log("server running");
-    console.log("TEST")
+    console.log("TEST");
 });
 
 module.exports = app;
