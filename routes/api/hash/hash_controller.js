@@ -20,15 +20,36 @@ exports.hashAdd = (req, res) =>{
 }
 
 exports.ChatList = (req, res) =>{
-    let uID = req.query.id;
-    let hashList = req.query.hashList;
+    let uID = req.body.uID;
+    let hashList = req.body.hashList;
     let chatList;
+    console.log(uID);
+    console.log(hashList);
     if(hashList == null){
         connection.query("select * from ChatList where chatID IN (select chatID from ChatMember where uID =" + uID + ");", function(err, row, fields){
-            res.send(row);
+            res.json(row);
             console.log(row);
-           
         });
-    }
-}   
-
+    }else{
+        console.log("list");
+        const ihashNum = hashList.length;
+        let strhashIn = "(";
+        for (var i = 0; i < hashList.length; i++){
+            strhashIn += '\'';
+            strhashIn += hashList[i].hash;
+            strhashIn += '\'';
+            if (i < hashList.length - 1){
+                strhashIn += ',';
+            }
+            console.log(strhashIn);
+        }
+        strhashIn += ')';
+        console.log(strhashIn);
+        connection.query("SELECT chatID, COUNT(DISTINCT HASH) AS HASH FROM HashTagUsed WHERE HASH IN " + strhashIn + "GROUP BY chatID HAVING COUNT(DISTINCT HASH) = " + ihashNum +";",function(err, row, fields){
+            res.json(row);
+            console.log(row);
+        }); 
+        var str1 = "SELECT chatID, COUNT(DISTINCT HASH) AS HASH FROM HashTagUsed WHERE HASH IN " + strhashIn + "GROUP BY chatID HAVING COUNT(DISTINCT HASH) = " + ihashNum +";";
+        console.log(str1);
+    }   
+}
