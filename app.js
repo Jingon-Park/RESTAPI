@@ -9,7 +9,7 @@ const hash = require("./routes/api/hash/index");
 
 app.use('/hash', hash);
 
-app.listen(3000, ()=>{
+app.listen(8080, ()=>{
     console.log("server running");
     console.log("TEST");
 });
