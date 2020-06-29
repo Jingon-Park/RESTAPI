@@ -32,7 +32,6 @@ const getChatID = function(hashList, callback){
             chatIDarray.push(row[i].chatID);
             
         }
-   
         callback(chatIDarray);
     });
    
@@ -43,18 +42,30 @@ const getChatID = function(hashList, callback){
 exports.chatList = (req, res) =>{
     let uID = req.body.uID; //user의 ID
     let hashList = req.body.hashList;
-    //chatID들을 받아왔을때 채팅방에 대한 정보를 가져온다.
-    getChatID(hashList, function(row){
+    console.log(hashList.length);
+    if(hashList.length > 0){
+        //chatID들을 받아왔을때 채팅방에 대한 정보를 가져온다.
+        getChatID(hashList, function(row){
         let chatIDarray = row;
         let chatIDsql = "select * from ChatList where chatID IN (" + row + ");"; //SQL문
         connection.query(chatIDsql, function(err, row, fields){
             console.log(row); //단순출력
+            res.json(row); //host에게 json
         });
     });
-   
-    
+    }else {
+        console.log("none");
+        res.send("none");
+    } 
 }
+//채팅방 만들기 
 exports.roomCreate = (req, res) =>{
-    let ruID = req.body.ruid;
+    let ruID = req.body.uID;  //chatRoom 을 만드려고 시도한 유저의 ID를 chatRoom생성자의 ruID로써 사용
+    let hashList = req.body.hashList; //입력한 hashTag들 담는다.
+    let chatName = req.body.chatName;
+    let chatInfo = req.body.chatInfo;
+    
+    let strsql = "INSERT INTO ChatList (chatName, chatInfo, total, createData, isDeleted, onetoone) VALUES(\""+ chatName+"\",\""+chatInfo+"\", 1,now(),0,"+ruID+");";
+    console.log(strsql);
 
 } 
