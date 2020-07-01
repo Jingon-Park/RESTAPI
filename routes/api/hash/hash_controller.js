@@ -64,8 +64,25 @@ exports.roomCreate = (req, res) =>{
     let hashList = req.body.hashList; //입력한 hashTag들 담는다.
     let chatName = req.body.chatName;
     let chatInfo = req.body.chatInfo;
+    let chatID;
+    let strsql = "INSERT INTO ChatList (chatName, chatInfo, total, createdDate, isDeleted, onetoone, ruID) VALUES(\""+ chatName+"\",\""+chatInfo+"\", 1,now(),0,0,"+ruID+");";
+    connection.query(strsql, function(err, row, fields){
+        if(!err){
+            chatID = row.insertId; //생성한 chatRoom의 chatID를 받아온다.
+            let order = 1;
+            hashList.forEach(element => {
+                let sql = "INSERT INTO HashTagUsed VALUES (\""+ element+"\", "+chatID+","+order+");";
+                connection.query(sql, function(err, row, fields){
+                    if(!err){
+                        console.log(row);
+                    }
+                    else{
+                        console.log(err);
+                    }
+                })
+            });
+        }
+        
+    });
     
-    let strsql = "INSERT INTO ChatList (chatName, chatInfo, total, createData, isDeleted, onetoone) VALUES(\""+ chatName+"\",\""+chatInfo+"\", 1,now(),0,"+ruID+");";
-    console.log(strsql);
-
 } 
