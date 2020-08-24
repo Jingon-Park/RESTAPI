@@ -46,7 +46,6 @@ exports.chatList = (req, res) =>{
             let chatIDarray = row;
             let chatIDsql = "select * from ChatList where chatID IN (" + row + ");"; //SQL문
             connection.query(chatIDsql, function(err, row, fields){
-                console.log(row); //단순출력
                 res.json(row); //host에게 json
             });
         });
@@ -62,23 +61,25 @@ exports.roomCreate = (req, res) =>{
     let chatName = req.body.chatName;
     let chatInfo = req.body.chatInfo;
     let chatID;
+    let order = 1;
     let strsql = "INSERT INTO ChatList (chatName, chatInfo, total, createdDate, isDeleted, onetoone, ruID) VALUES(\""+ chatName+"\",\""+chatInfo+"\", 1,now(),0,0,"+ruID+");";
     connection.query(strsql, function(err, row, fields){//채팅방 생성
         if(!err){
             chatID = row.insertId; //생성한 chatRoom의 chatID를 받아온다.
-            let order = 1;
             hashList.forEach(element => {
                 let sql = "INSERT INTO HashTagUsed VALUES (\""+ element+"\", "+chatID+","+order+");";
                 connection.query(sql, function(err, row, fields){ //해시태그 추가
                     if(!err){
+                        order++;
                         console.log(row);
                     }
                     else console.log(err);
-                })
+                });
             });
             connection.query("INSERT INTO ChatMember VALUES("+ruID+","+chatID+", 0);", function(err, row, fields){//채팅 멤버 추가
                 console.log(row);
-            })
+            });
         }
+        else console.log(err);
     });
 } 
